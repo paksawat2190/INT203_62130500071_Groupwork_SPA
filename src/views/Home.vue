@@ -1,7 +1,7 @@
 <template>
   <background>
     <navbar />
-    <div class="home">
+    <div class="home w-screen">
       <!-- แบบประเมิน -->
       <h2 class="pl-3 pb-10 text-2xl font-bold tracking-widest">"What do you know about Doraemon"</h2>
       <div class="w-screen h-full">
@@ -21,6 +21,7 @@
                   type="text"
                   v-model.trim="enteredName"
                   @blur="validateName"
+                  placeholder="    ENTER HERE ☺☺ "
                 />
 
                 <p
@@ -39,6 +40,7 @@
                   type="text"
                   v-model.trim="enteredAge"
                   @blur="validateAge"
+                  placeholder="    ENTER HERE ☺☺ "
                 />
 
                 <p v-if="invalidAgeInput" class="text-red-500">♥♥♥ Please, Enter your Age!!! ♥♥♥</p>
@@ -103,24 +105,60 @@
 
               <button class="btn">Submit</button>
             </form>
-            <div>
+            <div class="pl-10 pt-6">
               <ul v-for="survey in surveyResults" :key="survey.id">
                 <li>
-                  <span>{{ survey.name }}</span>
-                 <p>Your old is :</p>
-                  <span>{{ survey.age }}</span>
-                  <p>Your answer of Doraemon's FanClub is :</p>
-                  <span>{{ survey.answer1 }}</span>,
-                  <span>{{ survey.answer2 }}</span>,
-                  <span>{{ survey.answer3 }}</span>
+                  <p>
+                    Your FanClub's Name is
+                    <span>{{ survey.name }}</span>
+                  </p>
+
+                  <p>
+                    Your old is
+                    <span>{{ survey.age }}</span>
+                  </p>
+
+                  <p>
+                    Your answer of Doraemon's FanClub is :
+                    <span>{{ survey.answer1 }}</span>,
+                    <span>{{ survey.answer2 }}</span>,
+                    <span>{{ survey.answer3 }}</span>
+                  </p>
+
+                  <button @click="showData(survey)">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6 13h-5v5h-2v-5h-5v-2h5v-5h2v5h5v2z"
+                      />
+                    </svg>
+                  </button>
+                  <button @click="deleteSurvey(survey.id)">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6 16.538l-4.592-4.548 4.546-4.587-1.416-1.403-4.545 4.589-4.588-4.543-1.405 1.405 4.593 4.552-4.547 4.592 1.405 1.405 4.555-4.596 4.591 4.55 1.403-1.416z"
+                      />
+                    </svg>
+                  </button>
                 </li>
               </ul>
             </div>
-          </div>
+          </div> 
         </div>
       </div>
     </div>
   </background>
+
+<bot/>
 </template>
 
 <script>
@@ -136,6 +174,9 @@ export default {
   },
   data() {
     return {
+      isEdit: false,
+      editId: "",
+      url: "http://localhost:3000/surveyResults",
       enteredName: "",
       invalidNameInput: false,
       enteredAge: "",
@@ -157,20 +198,139 @@ export default {
       this.invalidAnswerInput1 = this.answer1 === null ? true : false;
       this.invalidAnswerInput2 = this.answer2 === null ? true : false;
       this.invalidAnswerInput3 = this.answer3 === null ? true : false;
+        if ((!this.invalidNameInput&&!this.invalidAgeInput&&!this.invalidAnswerInput1&&!this.invalidAnswerInput2&&!this.invalidAnswerInput3)) {
+      {
+        if (this.isEdit) {
+          this.editSurvey({
+            id: this.editId,
+            name: this.enteredName,
+            age: this.enteredAge,
+            answer1: this.answer1,
+            answer2: this.answer2,
+            answer3: this.answer3,
+          });
+        } else {
+          this.addNewSurvey({
+            name: this.enteredName,
+            age: this.enteredAge,
+            answer1: this.answer1,
+            answer2: this.answer2,
+            answer3: this.answer3,
+          });
+        }
+      }
+    }
+      this.enteredName = "";
+      this.enteredAge = "";
+      this.answer1 = null;
+      this.answer2 = null;
+      this.answer3 = null;
 
     },
     validateName() {
       this.invalidNameInput = this.enteredName === '' ? true : false
       console.log(`name: ${this.invalidNameInput}`)
     },
-    validateAge(){
-      this.invalidAgeInput= this.enteredAge ==='' ? true : false 
+    validateAge() {
+      this.invalidAgeInput = this.enteredAge === '' ? true : false
       console.log(`age : ${this.invalidAgeInput}`);
-    }
-
-
-
-    
-  }
+    },
+    showData(oldSurvey) {
+      this.isEdit = true
+      this.editId = oldSurvey.id
+      this.enteredName = oldSurvey.name
+      this.enteredAge = oldSurvey.age
+      this.answer1 = oldSurvey.answer1,
+        this.answer2 = oldSurvey.answer2,
+        this.answer3 = oldSurvey.answer3
+    },
+    async editSurvey(editingSurvey) {
+      try {
+        const res = await fetch(`${this.url}/${editingSurvey.id}`, {
+          method: 'PUT',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: editingSurvey.name,
+            age: editingSurvey.age,
+            answer1: editingSurvey.answer1,
+            answer2: editingSurvey.answer2,
+            answer3: editingSurvey.answer3,
+          })
+        })
+        const data = await res.json()
+        this.surveyResults = this.surveyResults.map((survey) =>
+          survey.id === editingSurvey.id
+            ? {
+              ...survey, name: data.name, age: data.age, answer1: data.answer1,
+              answer2: data.answer2,
+              answer3: data.answer3,            
 }
+            : survey
+        )
+
+        this.isEdit = false
+        this.editId = ''
+        this.enteredName = ''
+        this.enteredAge = null
+        this.answer1 = null;
+        this.answer2 = null;
+        this.answer3 = null;
+
+      } catch (error) {
+        console.log(`Could not edit! ${error}`)
+      }
+    },
+    async getSurveyResult() {
+      try {
+        const res = await fetch(this.url)
+        const data = await res.json()
+        return data
+      } catch (error) {
+        console.log(`Could not get! ${error}`)
+      }
+    },
+    async deleteSurvey(deleteId) {
+      try {
+        await fetch(`${this.url}/${deleteId}`, {
+          method: 'DELETE'
+        })
+        //filter - higher order function
+        this.surveyResults = this.surveyResults.filter(
+          (survey) => survey.id !== deleteId
+        )
+      } catch (error) {
+        console.log(`Could not delete! ${error}`)
+      }
+    },
+    async addNewSurvey(newSurvey) {
+      try {
+        const res = await fetch(this.url, {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: newSurvey.name,
+            age: newSurvey.age,
+            answer1: newSurvey.answer1,
+            answer2: newSurvey.answer2,
+            answer3: newSurvey.answer3,
+          })
+        })
+        const data = await res.json()
+        this.surveyResults = [...this.surveyResults, data]
+      } catch (error) {
+        console.log(`Could not save! ${error}`)
+      }
+    }
+  },
+
+  async created() {
+    this.surveyResults = await this.getSurveyResult()
+  }
+
+}
+
 </script>

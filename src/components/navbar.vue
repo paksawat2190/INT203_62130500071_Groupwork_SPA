@@ -1,14 +1,14 @@
 <template>
   <div>
     <div id="header">
-      <div class="bg-black flex py-1"></div>
+      <div class="bg-blue-800 flex py-2"></div>
       <div class="bg-blue-400 p-8 flex justify-between items-center">
         <div class="pl-96">
-          <h1 class="pl-44 text-4xl font-bold tracking-widest">DORAEMON OFFICAIL</h1>
+          <h1 class="pl-44 text-4xl font-bold tracking-widest ">DORAEMON OFFICAIL</h1>
         </div>
         <div class="flex  pr-24">
           <div class="pr-20 pt-2 flex flex-row">
-            <router-link to="/" class="inline-block pr-14">
+            <router-link to="/" class="inline-block pr-14 ">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                 <path
                   d="M12 9.185l7 6.514v6.301h-14v-6.301l7-6.514zm0-2.732l-9 8.375v9.172h18v-9.172l-9-8.375zm2 14.547h-4v-6h4v6zm10-8.852l-1.361 1.465-10.639-9.883-10.639 9.868-1.361-1.465 12-11.133 12 11.148z"
