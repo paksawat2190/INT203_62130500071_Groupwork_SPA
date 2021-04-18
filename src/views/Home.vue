@@ -3,7 +3,7 @@
     <navbar />
     <div class="home w-screen">
       <!-- แบบประเมิน -->
-      <h2 class="pl-3 pb-10 text-2xl font-bold tracking-widest">"What do you know about Doraemon"</h2>
+      <h2 class="pl-3 pt-5 pb-10 text-2xl font-bold tracking-widest">"What do you know about Doraemon"</h2>
       <div class="w-screen h-full">
         <div class="container">
           <div class="survey-container">
